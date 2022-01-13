@@ -4,7 +4,6 @@ import com.kualkua.gangcompetition.domain.Member;
 import com.kualkua.gangcompetition.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,13 +18,13 @@ public class MainController {
     @Autowired
     MemberRepository repository;
 
-    @GetMapping()
+    @GetMapping("/")
     public String hello(Map<String, Object> model) {
         model.put("members", new ArrayList<>(repository.findAll()));
-        return "index";
+        return "main";
     }
 
-    @PostMapping
+    @PostMapping("/main")
     public String addNewUser(
             @RequestParam String name,
             @RequestParam String email,
@@ -34,6 +33,6 @@ public class MainController {
         repository.save(member);
         List<Member> memberList = new ArrayList<>(repository.findAll());
         model.put("members", memberList);
-        return "index";
+        return "main";
     }
 }
