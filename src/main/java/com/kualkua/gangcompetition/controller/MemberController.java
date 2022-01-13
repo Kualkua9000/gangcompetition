@@ -5,11 +5,13 @@ import com.kualkua.gangcompetition.repository.MemberRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/user")
@@ -21,19 +23,18 @@ public class MemberController {
         this.memberRepository = memberRepository;
     }
 
-    @GetMapping("/save")
+    @PostMapping("/save")
     public String addUser(
             @RequestParam String name,
             @RequestParam(required = false, defaultValue = "") String email,
-            Model model) {
+            Map<String, Object> model) {
         Member member = new Member(name, email);
-        List<Member> memberList = new ArrayList<>();
-        memberList.add(member);
-        model.addAttribute("members", memberList);
         if (!name.isBlank()) {
             memberRepository.save(member);
-        } else throw new RuntimeException();
-        return "userSaved";
+        } else throw new IllegalArgumentException("Please fill in the \"name\" field");
+        List<Member> memberList = new ArrayList<>(memberRepository.findAll());
+        model.put("members", memberList);
+        return "userList";
     }
 }
 

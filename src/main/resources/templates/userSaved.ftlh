@@ -7,7 +7,7 @@
 <body>
 <div class="">The user has been saved!</div>
     <div>
-        <form action="/">
+        <form action="">
             <input type="submit" value="Go to Main page"/>
         </form>
     </div>

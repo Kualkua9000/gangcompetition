@@ -1,15 +1,16 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8"/>
-    <title>There's start page of the Gang Competition application.</title>
-</head>
+<#import "parts/page.ftlh" as c>
+<@c.page>
 <body>
-<#list members as member>
-<div>Hello ${member.name}!</div>
-<ul>
-    <li>${member}</li>
+    <#list members as member>
+        <div>Hello ${member.name}!</div>
+        <ul>
+            <li>${member}</li>
+        </ul>
     </#list>
-</ul>
+<div>
+    <form action="" method="post">
+        <button type="submit">Main page</button>
+    </form>
+</div>
 </body>
-</html>
+</@c.page>
