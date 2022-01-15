@@ -1,12 +1,9 @@
-<#import "parts/page.ftlh" as c>
+<#import "parts/common.ftlh" as c>
 <@c.page>
-<div>
-    <h1>Hello everyone!</h1>
-    <form method="post" action="/main">
-        <button type="submit">Main page</button>
-    </form>
-    <#--<form method="post" action="/login">
-        <button type="submit"></button>
-    </form>-->
-</div>
+    <div>
+        <h1>Hello!</h1>
+        <form method="get" action="/main">
+            <button type="submit">Main page</button>
+        </form>
+    </div>
 </@c.page>

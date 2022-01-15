@@ -1,0 +1,40 @@
+package com.kualkua.gangcompetition.controller;
+
+import com.kualkua.gangcompetition.domain.Member;
+import com.kualkua.gangcompetition.domain.Role;
+import com.kualkua.gangcompetition.repository.MemberRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.Collections;
+import java.util.Map;
+
+@Controller
+public class RegistrationController {
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @GetMapping("/registration")
+    public String registration() {
+        return "registration";
+    }
+
+    @PostMapping("/registration")
+    public String addUser(Member user, Map<String, Object> model) {
+        Member userFromDb = memberRepository.findByName(user.getName());
+
+        if (userFromDb != null) {
+            model.put("message", "User exists!");
+            return "registration";
+        }
+
+        user.setActive(true);
+        user.setRoles(Collections.singleton(Role.USER));
+        memberRepository.save(user);
+
+        return "redirect:/login";
+    }
+}
