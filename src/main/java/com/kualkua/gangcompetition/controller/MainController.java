@@ -21,6 +21,11 @@ public class MainController {
     @GetMapping("/")
     public String hello(Map<String, Object> model) {
         model.put("members", new ArrayList<>(repository.findAll()));
+        return "welcome";
+    }
+
+    @GetMapping("/main")
+    public String addNewUser(Map<String, Object> model) {
         return "main";
     }
 

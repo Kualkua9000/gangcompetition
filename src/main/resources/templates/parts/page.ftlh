@@ -7,6 +7,11 @@
     </head>
     <body>
     <#nested>
+    <div>
+        <form action="/logout" method="post">
+            <input type="submit" value="Sign Out"/>
+        </form>
+    </div>
     </body>
     </html>
 </#macro>

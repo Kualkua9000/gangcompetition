@@ -1,7 +1,7 @@
 <#import "parts/page.ftlh" as c>
 <@c.page>
     <div>
-        <form method="post" action="">
+        <form method="post" action="/">
             <input type="text" name="name" placeholder="Please enter the name">
             <input type="text" name="email" placeholder="Please enter the e-mail">
             <input type="hidden" name="_csrf" value="${_csrf.token}"/>
