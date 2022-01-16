@@ -13,22 +13,22 @@ public class Member implements UserDetails {
     private @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
-    private String name;
+    private String username;
     private String password;
     private String email;
-    private String role;
     private boolean active;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
+    @CollectionTable(name = "member_role", joinColumns = @JoinColumn(name = "member_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
 
     public Member() {
     }
 
-    public Member(String name, String email) {
-        this.name = name;
-        this.email = email;
+    public Member(String username, String password) {
+        this.username = username;
+        this.password = password;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class Member implements UserDetails {
 
     @Override
     public String getUsername() {
-        return getName();
+        return username;
     }
 
     @Override
@@ -66,12 +66,20 @@ public class Member implements UserDetails {
         return isActive();
     }
 
-    public String getName() {
-        return name;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setPassword(String password) {
@@ -86,12 +94,8 @@ public class Member implements UserDetails {
         this.email = email;
     }
 
-    public String getRole() {
-        return role;
-    }
-
-    public void setRole(String role) {
-        this.role = role;
+    public void setActive(boolean active) {
+        this.active = active;
     }
 
     public Set<Role> getRoles() {
@@ -100,25 +104,5 @@ public class Member implements UserDetails {
 
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    @Override
-    public String toString() {
-        return "Member{" +
-                "name='" + name + '\'' +
-                ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
-                ", role='" + role + '\'' +
-                ", active=" + active +
-                ", roles=" + roles +
-                '}';
     }
 }

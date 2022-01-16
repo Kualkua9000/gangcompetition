@@ -5,21 +5,28 @@
     <#if Session.SPRING_SECURITY_CONTEXT.authentication.principal??>
         <h1>Hello ${Session.SPRING_SECURITY_CONTEXT.authentication.principal.getUsername()}</#if>!</h1>
 
-    <br><br>
     <div>
         <form method="post" action="/main">
-            <input type="text" name="name" placeholder="Please enter the name">
-            <input type="text" name="email" placeholder="Please enter the e-mail">
+            <p>"Please select the activity: "</p>
+            <select name="activityType">
+                <option value="running" selected>RUNNING</option>
+                <option value="walking">WALKING</option>
+                <option value="bicycle">BICYCLE</option>
+            </select>
+            <input type="text" name="activityDistance" placeholder="Please enter the activity distance">
+            <input type="text" name="activityTime" placeholder="Please enter the activity time">
+            <input type="text" name="activityPace" placeholder="Please enter the activity pace">
+            <input type="date" name="activityDate" placeholder="Please enter the date">
             <input type="hidden" name="_csrf" value="${_csrf.token}"/>
             <button type="submit">Save</button>
         </form>
     </div>
 
-    <#if members??>
+    <#if activityList??>
         <div>
-            <#list members as member>
+            <#list activityList as activity>
                 <ul>
-                    <li>${member}</li>
+                    <li>${activity}</li>
                 </ul>
             </#list>
         </div>
@@ -27,7 +34,7 @@
     <div>
         <br>
         <form action="/" method="get">
-            <button type="submit">Main page</button>
+            <button type="submit">Hello page</button>
         </form>
     </div>
     <br><br>
