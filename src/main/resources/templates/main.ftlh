@@ -3,7 +3,8 @@
 <@c.page>
 
     <#if Session.SPRING_SECURITY_CONTEXT.authentication.principal??>
-        <h1>Hello ${Session.SPRING_SECURITY_CONTEXT.authentication.principal.getUsername()}</#if>!</h1>
+        <h1>Hello ${Session.SPRING_SECURITY_CONTEXT.authentication.principal.getUsername()!}</h1>
+    </#if>
 
     <div>
         <form method="post" action="/main">
@@ -35,6 +36,12 @@
         <br>
         <form action="/" method="get">
             <button type="submit">Hello page</button>
+        </form>
+    </div>
+    <div>
+        <form action="/user" method="get">
+            <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+            <button type="submit">User list</button>
         </form>
     </div>
     <br><br>

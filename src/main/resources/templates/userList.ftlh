@@ -1,15 +1,20 @@
 <#import "parts/common.ftlh" as c>
 <@c.page>
     <div>
-        <#list members as member>
-            <div>Hello ${member.name}!</div>
+        <#if Session.SPRING_SECURITY_CONTEXT.authentication.principal??>
+            <h1>Hello ${Session.SPRING_SECURITY_CONTEXT.authentication.principal.getUsername()!}</h1>
+        </#if>
+        <#list userList as users>
             <ul>
-                <li>${member}</li>
+                <li>
+                    <tr>
+
+                    </tr>
+                </li>
             </ul>
         </#list>
         <div>
-            <form action="" method="post">
-                <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+            <form action="/main" method="get">
                 <button type="submit">Main page</button>
             </form>
         </div>
