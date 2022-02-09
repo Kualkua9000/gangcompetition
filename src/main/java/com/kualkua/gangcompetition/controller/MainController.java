@@ -6,6 +6,7 @@ import com.kualkua.gangcompetition.domain.Member;
 import com.kualkua.gangcompetition.repository.ActivityRepository;
 import com.kualkua.gangcompetition.service.StravaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -30,8 +31,11 @@ public class MainController {
     StravaService stravaService;
 
     @GetMapping("/")
-    public String hello(Map<String, Object> model) throws Exception {
+    public String hello(Map<String, Object> model) {
+
+        // TODO: 09.02.2022 to remove test data
         stravaService.run();
+
         return "welcome";
     }
 
