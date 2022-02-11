@@ -5,7 +5,6 @@ import net.minidev.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
@@ -22,14 +21,20 @@ public class StravaClientImpl implements StravaClient {
     String stravaRetardsClubId;
 
     @Override
+    public String getAuthString() {
+        // TODO: 10.02.2022
+        return null;
+    }
+
+    @Override
     @Bean
-    public CommandLineRunner connect() {
-        return args -> {
+    public JSONObject getLastActivity() {
+
             JSONObject json = new RestTemplateBuilder()
                     .build()
                     .getForObject(testUrl, JSONObject.class);
             String jsonResponse = json != null ? json.toJSONString() : "undefined";
             log.info(jsonResponse);
-        };
+            return json;
     }
 }

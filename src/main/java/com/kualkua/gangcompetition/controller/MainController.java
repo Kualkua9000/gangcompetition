@@ -6,14 +6,11 @@ import com.kualkua.gangcompetition.domain.Member;
 import com.kualkua.gangcompetition.repository.ActivityRepository;
 import com.kualkua.gangcompetition.service.StravaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -34,7 +31,7 @@ public class MainController {
     public String hello(Map<String, Object> model) {
 
         // TODO: 09.02.2022 to remove test data
-        stravaService.run();
+        stravaService.getUserLastActivity();
 
         return "welcome";
     }

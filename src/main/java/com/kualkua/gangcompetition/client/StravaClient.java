@@ -1,11 +1,11 @@
 package com.kualkua.gangcompetition.client;
 
-import org.springframework.boot.CommandLineRunner;
+import net.minidev.json.JSONObject;
 import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 @Component
-@RequestMapping("/")
 public interface StravaClient {
-        CommandLineRunner connect();
+
+        String getAuthString();
+        JSONObject getLastActivity();
 }
