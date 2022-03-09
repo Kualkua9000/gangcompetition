@@ -31,7 +31,7 @@ public class MainController {
     public String hello(Map<String, Object> model) {
 
         // TODO: 09.02.2022 to remove test data
-        stravaService.getUserLastActivity();
+        //stravaService.getUserLastActivity();
 
         return "welcome";
     }
