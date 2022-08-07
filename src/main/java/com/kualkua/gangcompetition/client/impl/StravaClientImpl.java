@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -14,7 +13,7 @@ public class StravaClientImpl implements StravaClient {
 
     private static final Logger log = LoggerFactory.getLogger(StravaClientImpl.class);
 
-    @Value("${testUrl}")
+    @Value("${stravaTestUrl}")
     String testUrl;
 
     @Value("${stravaRetardsClubId}")
@@ -27,14 +26,29 @@ public class StravaClientImpl implements StravaClient {
     }
 
     @Override
-    @Bean
-    public JSONObject getLastActivity() {
+    public String getBearer(String authString) {
+        return null;
+    }
 
+    @Override
+    public JSONObject getUserInfo(String jwt) {
+        JSONObject json = new RestTemplateBuilder()
+                .build()
+                .getForObject(testUrl, JSONObject.class);
+        String jsonResponse = json != null ? json.toJSONString() : "undefined";
+        log.info(jsonResponse);
+        return json;
+    }
+
+    @Override
+    public JSONObject getLastActivity() {
             JSONObject json = new RestTemplateBuilder()
+                    .defaultHeader("Authorization", "Bearer da38adaf03731d4f5920e87500333a8d8f049bd4")
                     .build()
-                    .getForObject(testUrl, JSONObject.class);
+                    .getForObject("https://www.strava.com/api/v3/athletes/21288485/stats", JSONObject.class);
             String jsonResponse = json != null ? json.toJSONString() : "undefined";
             log.info(jsonResponse);
+            //id=21288485
             return json;
     }
 }
