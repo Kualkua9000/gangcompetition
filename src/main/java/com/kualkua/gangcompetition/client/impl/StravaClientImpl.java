@@ -43,7 +43,7 @@ public class StravaClientImpl implements StravaClient {
     @Override
     public JSONObject getLastActivity() {
             JSONObject json = new RestTemplateBuilder()
-                    .defaultHeader("Authorization", "Bearer da38adaf03731d4f5920e87500333a8d8f049bd4")
+                    .defaultHeader("Authorization", "Bearer *")
                     .build()
                     .getForObject("https://www.strava.com/api/v3/athletes/21288485/stats", JSONObject.class);
             String jsonResponse = json != null ? json.toJSONString() : "undefined";
