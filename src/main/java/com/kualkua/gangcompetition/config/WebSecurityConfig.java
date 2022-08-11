@@ -1,7 +1,6 @@
 package com.kualkua.gangcompetition.config;
 
 import com.kualkua.gangcompetition.service.MemberService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,8 +12,11 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    @Autowired
-    private MemberService memberService;
+    private final MemberService memberService;
+
+    public WebSecurityConfig(MemberService memberService) {
+        this.memberService = memberService;
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {

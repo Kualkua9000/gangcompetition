@@ -54,6 +54,7 @@
             <input type="hidden" name="_csrf" value="${_csrf.token}"/>
             </form>
         </div>
+        <br><br>
         <div>
             <@l.logout />
         </div>

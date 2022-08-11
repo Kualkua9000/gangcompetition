@@ -6,7 +6,6 @@ import lombok.SneakyThrows;
 import net.minidev.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
@@ -14,8 +13,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
 
 @Component
@@ -89,7 +86,7 @@ public class StravaClientImpl implements StravaClient {
     @Override
     public JSONObject getLastActivity() {
         JSONObject json = new RestTemplateBuilder()
-                .defaultHeader("Authorization", "Bearer 0bc0e847a2bc1c9af71f0ea966acb3153b0d6065")
+                .defaultHeader("Authorization", "")
                 .build()
                 .getForObject("https://www.strava.com/api/v3/athletes/21288485/stats", JSONObject.class);
         String jsonResponse = json != null ? json.toJSONString() : "undefined";
