@@ -7,7 +7,8 @@ import org.springframework.stereotype.Component;
 public interface StravaClient {
 
         String getAuthString();
-        String getBearer(String authCode);
+        OAuthToken getBearer(String authCode);
+        OAuthToken updateBearer(String refreshToken);
         JSONObject getLastActivity();
         JSONObject getUserInfo(String jwt);
 }

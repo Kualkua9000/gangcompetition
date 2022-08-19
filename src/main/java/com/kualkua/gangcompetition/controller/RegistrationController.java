@@ -1,5 +1,6 @@
 package com.kualkua.gangcompetition.controller;
 
+import com.kualkua.gangcompetition.client.OAuthToken;
 import com.kualkua.gangcompetition.client.StravaClient;
 import com.kualkua.gangcompetition.domain.Member;
 import com.kualkua.gangcompetition.domain.Role;
@@ -49,7 +50,7 @@ public class RegistrationController {
 
     @GetMapping("/exchange_token")
     public String getBearer(@RequestParam(name = "code") String code) {
-        String jwt = stravaClient.getBearer(code);
+        OAuthToken jwt = stravaClient.getBearer(code);
         System.out.println("___authCode: " + code);
         System.out.println("___jwt: " + jwt);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -61,7 +62,7 @@ public class RegistrationController {
                 .findByUsername(currentUserName)
                 .setRefreshToken(jwt);*/
         Member member = memberRepository.findByUsername(currentUserName);
-        member.setRefreshToken(jwt);
+        member.setRefreshToken(jwt.value());
         memberRepository.save(member);
         return "main";
     }
