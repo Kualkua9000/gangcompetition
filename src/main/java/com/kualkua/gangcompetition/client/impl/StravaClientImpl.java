@@ -2,6 +2,7 @@ package com.kualkua.gangcompetition.client.impl;
 
 import com.kualkua.gangcompetition.client.OAuthToken;
 import com.kualkua.gangcompetition.client.StravaClient;
+import com.kualkua.gangcompetition.domain.Member;
 import com.kualkua.gangcompetition.repository.ActivityRepository;
 import com.kualkua.gangcompetition.repository.MemberRepository;
 import lombok.SneakyThrows;
@@ -70,7 +71,6 @@ public class StravaClientImpl implements StravaClient {
     @SneakyThrows
     @Override
     public OAuthToken getBearer(String authCode) {
-
         URI uri = getUriForJwt("code", authCode);
         JSONObject json = new RestTemplateBuilder()
                 .build()
@@ -120,13 +120,12 @@ public class StravaClientImpl implements StravaClient {
     }
 
     private OAuthToken fetchToken() {
-        return new OAuthToken(
-                OAuthToken.TOKEN_TYPE_BEARER,
-                updateBearer(memberRepository
+        OAuthToken token = updateBearer(
+                memberRepository
                         .findByUsername(getUserName())
-                        .getRefreshToken())
-                        .value(),
-                0L);
+                        .getRefreshToken());
+        memberRepository.saveMemberToken(token.value());
+        return token;
     }
 
     private URI getUriForJwt(String authParam, String authValue) {
@@ -151,6 +150,7 @@ public class StravaClientImpl implements StravaClient {
         String currentUserName = "";
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             currentUserName = authentication.getName();
-        } return currentUserName;
+        }
+        return currentUserName;
     }
 }
