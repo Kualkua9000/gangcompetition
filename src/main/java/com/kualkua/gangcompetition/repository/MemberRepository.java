@@ -10,7 +10,7 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Member findByUsername(String username);
 
-    default void saveMemberToken(String token) {
+    default void saveMemberRefresh(String token) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUserName = "";
         if (!(authentication instanceof AnonymousAuthenticationToken)) {

@@ -49,7 +49,7 @@ public class RegistrationController {
         OAuthToken jwt = stravaClient.getBearer(code);
         System.out.println("___authCode: " + code);
         System.out.println("___jwt: " + jwt);
-        memberRepository.saveMemberToken(jwt.value());
+        memberRepository.saveMemberRefresh(jwt.value());
         return "main";
     }
 }

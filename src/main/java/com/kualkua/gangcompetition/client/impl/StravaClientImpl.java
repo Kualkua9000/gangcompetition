@@ -2,7 +2,6 @@ package com.kualkua.gangcompetition.client.impl;
 
 import com.kualkua.gangcompetition.client.OAuthToken;
 import com.kualkua.gangcompetition.client.StravaClient;
-import com.kualkua.gangcompetition.domain.Member;
 import com.kualkua.gangcompetition.repository.ActivityRepository;
 import com.kualkua.gangcompetition.repository.MemberRepository;
 import lombok.SneakyThrows;
@@ -64,7 +63,9 @@ public class StravaClientImpl implements StravaClient {
         return Objects.requireNonNull(Objects.requireNonNull(new RestTemplateBuilder()
                 .build()
                 .postForLocation("http://www.strava.com/oauth/authorize?client_id=" + clientId +
-                                "&response_type=code&redirect_uri=http://localhost:8080/exchange_token&approval_prompt=force&scope=read",
+                                "&response_type=code" +
+                                "&redirect_uri=http://localhost:8080/exchange_token&approval_prompt=force" +
+                                "&scope=read",
                         ResponseEntity.class)).toString());
     }
 
@@ -83,13 +84,15 @@ public class StravaClientImpl implements StravaClient {
     @SneakyThrows
     @Override
     public OAuthToken updateBearer(String refreshToken) {
-
         URI uri = getUriForJwt(REFRESH_TOKEN, refreshToken);
         JSONObject json = new RestTemplateBuilder()
                 .build()
                 .postForObject(uri,
                         null,
                         JSONObject.class);
+        memberRepository.saveMemberRefresh(
+                Objects.requireNonNull(json)
+                        .getAsString(REFRESH_TOKEN));
         return initToken(json);
     }
 
@@ -106,7 +109,8 @@ public class StravaClientImpl implements StravaClient {
         JSONObject json = new RestTemplateBuilder()
                 .defaultHeader("Authorization", "")
                 .build()
-                .getForObject("https://www.strava.com/api/v3/athletes/21288485/stats", JSONObject.class);
+                .getForObject("https://www.strava.com/api/v3/athletes/21288485/stats",
+                        JSONObject.class);
         String jsonResponse = json != null ? json.toJSONString() : "undefined";
         log.info(jsonResponse);
         return new JSONObject();
@@ -124,7 +128,7 @@ public class StravaClientImpl implements StravaClient {
                 memberRepository
                         .findByUsername(getUserName())
                         .getRefreshToken());
-        memberRepository.saveMemberToken(token.value());
+        memberRepository.saveMemberRefresh(token.value());
         return token;
     }
 
