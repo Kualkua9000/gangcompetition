@@ -11,4 +11,5 @@ public interface StravaClient {
         OAuthToken updateBearer(String refreshToken);
         JSONObject getLastActivity();
         JSONObject getUserInfo(String jwt);
+        void saveMemberRefresh(String token);
 }

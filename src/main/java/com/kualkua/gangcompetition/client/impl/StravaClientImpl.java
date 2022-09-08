@@ -2,8 +2,10 @@ package com.kualkua.gangcompetition.client.impl;
 
 import com.kualkua.gangcompetition.client.OAuthToken;
 import com.kualkua.gangcompetition.client.StravaClient;
+import com.kualkua.gangcompetition.domain.Member;
 import com.kualkua.gangcompetition.repository.ActivityRepository;
 import com.kualkua.gangcompetition.repository.MemberRepository;
+import com.kualkua.gangcompetition.service.StravaService;
 import lombok.SneakyThrows;
 import net.minidev.json.JSONObject;
 import org.slf4j.Logger;
@@ -90,7 +92,7 @@ public class StravaClientImpl implements StravaClient {
                 .postForObject(uri,
                         null,
                         JSONObject.class);
-        memberRepository.saveMemberRefresh(
+        saveMemberRefresh(
                 Objects.requireNonNull(json)
                         .getAsString(REFRESH_TOKEN));
         return initToken(json);
@@ -116,6 +118,18 @@ public class StravaClientImpl implements StravaClient {
         return new JSONObject();
     }
 
+    @Override
+    public void saveMemberRefresh(String token) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserName = "";
+        if (!(authentication instanceof AnonymousAuthenticationToken)) {
+            currentUserName = authentication.getName();
+        }
+        Member member = memberRepository.findByUsername(currentUserName);
+        member.setRefreshToken(token);
+        memberRepository.save(member);
+    }
+
     public OAuthToken getToken() {
         if (atomicRefToken.get().isExpired()) {
             atomicRefToken.set(this.fetchToken());
@@ -128,7 +142,7 @@ public class StravaClientImpl implements StravaClient {
                 memberRepository
                         .findByUsername(getUserName())
                         .getRefreshToken());
-        memberRepository.saveMemberRefresh(token.value());
+        saveMemberRefresh(token.value());
         return token;
     }
 
