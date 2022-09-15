@@ -18,6 +18,7 @@ public class Member implements UserDetails {
     private String email;
     private boolean active;
     private String refreshToken;
+    private Long stravaId;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
     @CollectionTable(name = "member_role", joinColumns = @JoinColumn(name = "member_id"))
@@ -113,5 +114,13 @@ public class Member implements UserDetails {
 
     public void setRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public Long getStravaId() {
+        return stravaId;
+    }
+
+    public void setStravaId(Long stravaId) {
+        this.stravaId = stravaId;
     }
 }

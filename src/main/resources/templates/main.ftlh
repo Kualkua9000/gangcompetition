@@ -56,6 +56,13 @@
         </div>
         <br><br>
         <div>
+            <form action="/user/activities" method="get">
+                <input type="submit" value="Strava get User activities"/>
+                <input type="hidden" name="_csrf" value="${_csrf.token}"/>
+            </form>
+        </div>
+        <br><br>
+        <div>
             <@l.logout />
         </div>
     </div>

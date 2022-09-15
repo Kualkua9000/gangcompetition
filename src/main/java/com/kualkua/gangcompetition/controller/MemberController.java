@@ -32,4 +32,11 @@ public class MemberController {
         attributes.addAttribute("attribute", "redirectWithRedirectView");
         return "redirect:" + (stravaClient.getAuthString());
     }
+
+    @GetMapping("/activities")
+    public String getActivities() {
+        //model.addAttribute("userList", memberRepository.findAll());
+        stravaClient.getActivities();
+        return "main";
+    }
 }
