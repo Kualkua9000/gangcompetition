@@ -20,7 +20,6 @@ public class StravaService {
     }
 
     public JSONObject getUserLastActivity() {
-        client.getAuthString();
         return client.getLastActivity();
     }
 

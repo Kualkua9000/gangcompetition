@@ -35,7 +35,6 @@ public class MemberController {
 
     @GetMapping("/activities")
     public String getActivities() {
-        //model.addAttribute("userList", memberRepository.findAll());
         stravaClient.getActivities();
         return "main";
     }

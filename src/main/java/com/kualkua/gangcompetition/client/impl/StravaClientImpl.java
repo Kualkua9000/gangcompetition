@@ -5,7 +5,9 @@ import com.kualkua.gangcompetition.client.StravaClient;
 import com.kualkua.gangcompetition.domain.Member;
 import com.kualkua.gangcompetition.repository.ActivityRepository;
 import com.kualkua.gangcompetition.repository.MemberRepository;
+import lombok.NonNull;
 import lombok.SneakyThrows;
+import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -42,7 +43,7 @@ public class StravaClientImpl implements StravaClient {
     @Value("${stravaRetardsClubId}")
     String stravaRetardsClubId;
 
-    private final AtomicReference<OAuthToken> atomicRefToken = new AtomicReference<>(OAuthToken.expiredToken());
+    private final AtomicReference<OAuthToken> atomicToken = new AtomicReference<>(OAuthToken.expiredToken());
 
     public final ActivityRepository activityRepository;
 
@@ -51,7 +52,6 @@ public class StravaClientImpl implements StravaClient {
     private static final String ACCESS_TOKEN = "access_token";
     private static final String EXPIRES_IN = "expires_in";
     private static final String REFRESH_TOKEN = "refresh_token";
-    private static final String STRAVA_ID = "id";
 
     private static final Logger log = LoggerFactory.getLogger(StravaClientImpl.class);
 
@@ -59,6 +59,13 @@ public class StravaClientImpl implements StravaClient {
                             MemberRepository memberRepository) {
         this.activityRepository = activityRepository;
         this.memberRepository = memberRepository;
+    }
+
+    public void startInitiatingToken() {
+        if(atomicToken.get().getRefreshToken().equals("expired")) {
+            atomicToken.set(new AtomicReference<>(updateBearer(memberRepository
+                    .findByUsername(getUserName()).getRefreshToken())).get());
+        }
     }
 
     @SneakyThrows
@@ -82,10 +89,11 @@ public class StravaClientImpl implements StravaClient {
                 .postForObject(uri,
                         null,
                         JSONObject.class);
-        LinkedHashMap stravaAthlete = (LinkedHashMap) Objects.requireNonNull(json).get("athlete");
-        Integer stravaId = (Integer) stravaAthlete.get("id");
+        @NonNull
+        LinkedHashMap<String, Integer> stravaAthlete = (LinkedHashMap<String, Integer>) json.get("athlete");
+        Integer stravaId = stravaAthlete.get("id");
         saveStravaId(stravaId);
-        atomicRefToken.set(initToken(json));
+        atomicToken.set(initToken(json));
         return initToken(json);
     }
 
@@ -103,7 +111,7 @@ public class StravaClientImpl implements StravaClient {
     @SneakyThrows
     @Override
     public OAuthToken updateBearer(String refreshToken) {
-        URI uri = getUriForJwt(REFRESH_TOKEN, refreshToken);
+        URI uri = getUriForUpdateJwt(REFRESH_TOKEN, refreshToken);
         JSONObject json = new RestTemplateBuilder()
                 .build()
                 .postForObject(uri,
@@ -125,7 +133,7 @@ public class StravaClientImpl implements StravaClient {
     @Override
     public JSONObject getLastActivity() {
         JSONObject json = new RestTemplateBuilder()
-                .defaultHeader("Authorization", atomicRefToken.get().value())
+                .defaultHeader("Authorization", atomicToken.get().value())
                 .build()
                 .getForObject("https://www.strava.com/api/v3/athletes/21288485/stats",
                         JSONObject.class);
@@ -147,21 +155,20 @@ public class StravaClientImpl implements StravaClient {
     }
 
     @Override
-    public JSONObject getActivities() {
-        //8b0703ee1f9e2f8b39ffffca5bf85c678697661b
-        JSONObject json = new RestTemplateBuilder()
-                .defaultHeader("Authorization", atomicRefToken.get().value())
+    public JSONArray getActivities() {
+        startInitiatingToken();
+        return new RestTemplateBuilder()
+                .defaultHeader("Authorization", atomicToken.get().value())
                 .build()
                 .getForObject("https://www.strava.com/api/v3/athlete/activities",
-                        JSONObject.class);
-        return json;
+                        JSONArray.class);
     }
 
     public OAuthToken getToken() {
-        if (atomicRefToken.get().isExpired()) {
-            atomicRefToken.set(this.fetchToken());
+        if (atomicToken.get().isExpired()) {
+            atomicToken.set(this.fetchToken());
         }
-        return atomicRefToken.get();
+        return atomicToken.get();
     }
 
     private OAuthToken fetchToken() {
@@ -169,7 +176,7 @@ public class StravaClientImpl implements StravaClient {
                 memberRepository
                         .findByUsername(getUserName())
                         .getRefreshToken());
-        saveMemberRefresh(token.value());
+        saveMemberRefresh(token.getRefreshToken());
         return token;
     }
 
@@ -178,14 +185,23 @@ public class StravaClientImpl implements StravaClient {
                 .queryParam(authParam, authValue)
                 .queryParam("client_id", clientId)
                 .queryParam("client_secret", clientSecret)
-                .queryParam(REFRESH_TOKEN, "authorization_code")
+                //.queryParam(REFRESH_TOKEN, "authorization_code")
+                .build()
+                .toUri();
+    }
+
+    private URI getUriForUpdateJwt(String authParam, String authValue) {
+        return UriComponentsBuilder.fromUriString(stravaTokenUrl)
+                .queryParam(authParam, authValue)
+                .queryParam("client_id", clientId)
+                .queryParam("client_secret", clientSecret)
+                .queryParam("grant_type", "refresh_token")
                 .build()
                 .toUri();
     }
 
 
     private OAuthToken initToken(JSONObject json) {
-        // TODO: 15.09.2022 ma be we can to use initToken only for getting token after registration in strava
         return new OAuthToken(
                 OAuthToken.TOKEN_TYPE_BEARER,
                 Objects.requireNonNull(json).getAsString(ACCESS_TOKEN),
