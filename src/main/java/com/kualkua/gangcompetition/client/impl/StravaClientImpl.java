@@ -37,11 +37,8 @@ public class StravaClientImpl implements StravaClient {
     @Value("${stravaTokenUrl}")
     String stravaTokenUrl;
 
-    @Value("${stravaTestUrl}")
-    String testUrl;
-
-    @Value("${stravaRetardsClubId}")
-    String stravaRetardsClubId;
+    @Value("${stravaBaseUrl}")
+    String stravaBaseUrl;
 
     private final AtomicReference<OAuthToken> atomicToken = new AtomicReference<>(OAuthToken.expiredToken());
 
@@ -83,7 +80,7 @@ public class StravaClientImpl implements StravaClient {
     @SneakyThrows
     @Override
     public OAuthToken getBearer(String authCode) {
-        URI uri = getUriForJwt("code", authCode);
+        URI uri = getUriForJwt(authCode);
         JSONObject json = new RestTemplateBuilder()
                 .build()
                 .postForObject(uri,
@@ -111,7 +108,7 @@ public class StravaClientImpl implements StravaClient {
     @SneakyThrows
     @Override
     public OAuthToken updateBearer(String refreshToken) {
-        URI uri = getUriForUpdateJwt(REFRESH_TOKEN, refreshToken);
+        URI uri = getUriForUpdateJwt(refreshToken);
         JSONObject json = new RestTemplateBuilder()
                 .build()
                 .postForObject(uri,
@@ -127,7 +124,7 @@ public class StravaClientImpl implements StravaClient {
     public JSONObject getUserInfo(String jwt) {
         return new RestTemplateBuilder()
                 .build()
-                .getForObject(testUrl, JSONObject.class);
+                .getForObject(stravaBaseUrl, JSONObject.class);
     }
 
     @Override
@@ -180,9 +177,9 @@ public class StravaClientImpl implements StravaClient {
         return token;
     }
 
-    private URI getUriForJwt(String authParam, String authValue) {
+    private URI getUriForJwt(String authValue) {
         return UriComponentsBuilder.fromUriString(stravaTokenUrl)
-                .queryParam(authParam, authValue)
+                .queryParam("code", authValue)
                 .queryParam("client_id", clientId)
                 .queryParam("client_secret", clientSecret)
                 //.queryParam(REFRESH_TOKEN, "authorization_code")
@@ -190,9 +187,9 @@ public class StravaClientImpl implements StravaClient {
                 .toUri();
     }
 
-    private URI getUriForUpdateJwt(String authParam, String authValue) {
+    private URI getUriForUpdateJwt(String authValue) {
         return UriComponentsBuilder.fromUriString(stravaTokenUrl)
-                .queryParam(authParam, authValue)
+                .queryParam(REFRESH_TOKEN, authValue)
                 .queryParam("client_id", clientId)
                 .queryParam("client_secret", clientSecret)
                 .queryParam("grant_type", "refresh_token")
