@@ -3,9 +3,9 @@ package com.kualkua.gangcompetition.client.impl;
 import com.kualkua.gangcompetition.client.OAuthToken;
 import com.kualkua.gangcompetition.client.StravaClient;
 import com.kualkua.gangcompetition.domain.Member;
+import com.kualkua.gangcompetition.dto.StravaTokenResponseDto;
 import com.kualkua.gangcompetition.repository.ActivityRepository;
 import com.kualkua.gangcompetition.repository.MemberRepository;
-import lombok.NonNull;
 import lombok.SneakyThrows;
 import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
-import java.util.LinkedHashMap;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -59,7 +58,7 @@ public class StravaClientImpl implements StravaClient {
     }
 
     public void startInitiatingToken() {
-        if(atomicToken.get().getRefreshToken().equals("expired")) {
+        if (atomicToken.get().getRefreshToken().equals("expired")) {
             atomicToken.set(new AtomicReference<>(updateBearer(memberRepository
                     .findByUsername(getUserName()).getRefreshToken())).get());
         }
@@ -72,7 +71,7 @@ public class StravaClientImpl implements StravaClient {
                 .build()
                 .postForLocation("http://www.strava.com/oauth/authorize?client_id=" + clientId +
                                 "&response_type=code" +
-                                "&redirect_uri=http://localhost:8080/exchange_token&approval_prompt=force" +
+                                "&redirect_uri=https://acf3-190-2-153-222.eu.ngrok.io/exchange_token&approval_prompt=force" +
                                 "&scope=read,activity:read",
                         ResponseEntity.class)).toString());
     }
@@ -81,17 +80,15 @@ public class StravaClientImpl implements StravaClient {
     @Override
     public OAuthToken getBearer(String authCode) {
         URI uri = getUriForJwt(authCode);
-        JSONObject json = new RestTemplateBuilder()
+        StravaTokenResponseDto responseDto = new RestTemplateBuilder()
                 .build()
                 .postForObject(uri,
                         null,
-                        JSONObject.class);
-        @NonNull
-        LinkedHashMap<String, Integer> stravaAthlete = (LinkedHashMap<String, Integer>) json.get("athlete");
-        Integer stravaId = stravaAthlete.get("id");
+                        StravaTokenResponseDto.class);
+        int stravaId = responseDto.getAthlete().getId();
         saveStravaId(stravaId);
-        atomicToken.set(initToken(json));
-        return initToken(json);
+        atomicToken.set(initToken(responseDto));
+        return initToken(responseDto);
     }
 
     private void saveStravaId(Number stravaId) {
@@ -109,15 +106,13 @@ public class StravaClientImpl implements StravaClient {
     @Override
     public OAuthToken updateBearer(String refreshToken) {
         URI uri = getUriForUpdateJwt(refreshToken);
-        JSONObject json = new RestTemplateBuilder()
+        StravaTokenResponseDto responseDto = new RestTemplateBuilder()
                 .build()
                 .postForObject(uri,
                         null,
-                        JSONObject.class);
-        saveMemberRefresh(
-                Objects.requireNonNull(json)
-                        .getAsString(REFRESH_TOKEN));
-        return initToken(json);
+                        StravaTokenResponseDto.class);
+        saveMemberRefresh(Objects.requireNonNull(responseDto.getRefreshToken()));
+        return initToken(responseDto);
     }
 
     @Override
@@ -154,11 +149,13 @@ public class StravaClientImpl implements StravaClient {
     @Override
     public JSONArray getActivities() {
         startInitiatingToken();
-        return new RestTemplateBuilder()
+        JSONArray jsonArray = new RestTemplateBuilder()
                 .defaultHeader("Authorization", atomicToken.get().value())
                 .build()
-                .getForObject("https://www.strava.com/api/v3/athlete/activities",
+                .getForObject("https://www.strava.com/api/v3/activities",
                         JSONArray.class);
+        System.out.println(jsonArray);
+        return jsonArray;
     }
 
     public OAuthToken getToken() {
@@ -192,18 +189,18 @@ public class StravaClientImpl implements StravaClient {
                 .queryParam(REFRESH_TOKEN, authValue)
                 .queryParam("client_id", clientId)
                 .queryParam("client_secret", clientSecret)
-                .queryParam("grant_type", "refresh_token")
+                .queryParam("grant_type", REFRESH_TOKEN)
                 .build()
                 .toUri();
     }
 
 
-    private OAuthToken initToken(JSONObject json) {
+    private OAuthToken initToken(StravaTokenResponseDto responseDto) {
         return new OAuthToken(
-                OAuthToken.TOKEN_TYPE_BEARER,
-                Objects.requireNonNull(json).getAsString(ACCESS_TOKEN),
-                Long.parseLong(Objects.requireNonNull(json).getAsString(EXPIRES_IN)),
-                Objects.requireNonNull(json).getAsString(REFRESH_TOKEN));
+                responseDto.getTokenType(),
+                responseDto.getAccessToken(),
+                responseDto.getExpiresIn(),
+                responseDto.getRefreshToken());
     }
 
     private String getUserName() {
