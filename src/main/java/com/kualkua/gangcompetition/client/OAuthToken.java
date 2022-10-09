@@ -9,7 +9,7 @@ import java.time.temporal.ChronoUnit;
 
 public class OAuthToken implements Serializable {
 
-    public static final String TOKEN_TYPE_BEARER = "Bearer ";
+    private static final String TOKEN_TYPE_BEARER = "Bearer ";
 
     public static final Long SPARE_SECONDS = 100L;
 

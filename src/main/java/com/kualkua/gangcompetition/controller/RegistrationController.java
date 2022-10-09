@@ -27,13 +27,12 @@ public class RegistrationController {
     }
 
     @PostMapping("/registration")
-    public String addUser(Member user, Map<String, Object> model) {
-        Member memberFromDb = memberService.registrationUser(user);
-        if (memberFromDb != null) {
+    public String addUser(Member member, Map<String, Object> model) {
+        Member memberFromDb = memberService.registrationUser(member);
+        if (memberFromDb == null) {
             model.put("message", "User exists!");
             return "registration";
-        }
-        return "redirect:/login";
+        } else return "redirect:/login";
     }
 
     @GetMapping("/exchange_token")

@@ -7,7 +7,7 @@
             <h1>Hello ${Session.SPRING_SECURITY_CONTEXT.authentication.principal.getUsername()}!</h1>
         </#if>
 
-        <div>
+        <#--<div>
             <form method="post" action="/main">
                 <h2 class="h2">Please select the activity:</h2>
                 <select class="form-select" name="activityType">
@@ -23,7 +23,7 @@
                 <br>
                 <button class="btn-primary" type="submit">Save</button>
             </form>
-        </div>
+        </div>-->
 
         <#if activityList??>
             <div>

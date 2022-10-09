@@ -26,11 +26,12 @@ public class MemberService implements UserDetailsService {
 
     public Member registrationUser(Member user) {
         Member member = memberRepository.findByUsername(user.getUsername());
-        if (member != null) {
+        if (member == null) {
             user.setActive(true);
             user.setRoles(Collections.singleton(Role.USER));
             memberRepository.save(user);
+            return user;
         }
-        return member;
+        return null;
     }
 }

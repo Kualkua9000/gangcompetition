@@ -2,16 +2,11 @@ package com.kualkua.gangcompetition.controller;
 
 import com.kualkua.gangcompetition.client.StravaClient;
 import com.kualkua.gangcompetition.repository.MemberRepository;
-import net.minidev.json.JSONArray;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
 
 @Controller
 @RequestMapping("/user")
@@ -42,7 +37,7 @@ public class MemberController {
     public String getActivities(Model model) {
         //stravaClient.getActivities();
         //LinkedHashMap<String, String> linkedHashMap = (LinkedHashMap) stravaClient.getActivities();
-        model.addAttribute("activityList", stravaClient.getActivities().toJSONString());
+        model.addAttribute("activityList", stravaClient.getActivities().toJSONString().substring(0, 300));
         return "activityList";
     }
 }

@@ -1,0 +1,29 @@
+{
+  "access_token": "42cfb1be1b3f8ea25819435dabc73bc862145073",
+  "refresh_token": "0e2a8d765474339ae1ed9ad2404509f2e5162007",
+  "expires_at": 1664827473,
+  "athlete": {
+    "id": 21288485,
+    "username": "meadow_john",
+    "resource_state": 2,
+    "firstname": "Meadow",
+    "lastname": "John",
+    "bio": null,
+    "city": "Minsk",
+    "state": "",
+    "country": "Belarus",
+    "sex": "M",
+    "premium": false,
+    "summit": false,
+    "created_at": "2017-04-18T12:44:09Z",
+    "updated_at": "2022-07-24T01:29:21Z",
+    "badge_type_id": 0,
+    "weight": 93.6,
+    "profile_medium": "https:\/\/graph.facebook.com\/1663868563917158\/picture?height=256&width=256",
+    "profile": "https:\/\/graph.facebook.com\/1663868563917158\/picture?height=256&width=256",
+    "friend": null,
+    "follower": null
+  },
+  "token_type": "Bearer",
+  "expires_in": 13001
+}

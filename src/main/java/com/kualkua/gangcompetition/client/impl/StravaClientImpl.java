@@ -45,8 +45,6 @@ public class StravaClientImpl implements StravaClient {
 
     public final MemberRepository memberRepository;
 
-    private static final String ACCESS_TOKEN = "access_token";
-    private static final String EXPIRES_IN = "expires_in";
     private static final String REFRESH_TOKEN = "refresh_token";
 
     private static final Logger log = LoggerFactory.getLogger(StravaClientImpl.class);
@@ -71,7 +69,7 @@ public class StravaClientImpl implements StravaClient {
                 .build()
                 .postForLocation("http://www.strava.com/oauth/authorize?client_id=" + clientId +
                                 "&response_type=code" +
-                                "&redirect_uri=https://acf3-190-2-153-222.eu.ngrok.io/exchange_token&approval_prompt=force" +
+                                "&redirect_uri=http://localhost:8080/exchange_token&approval_prompt=force" +
                                 "&scope=read,activity:read",
                         ResponseEntity.class)).toString());
     }
@@ -149,13 +147,11 @@ public class StravaClientImpl implements StravaClient {
     @Override
     public JSONArray getActivities() {
         startInitiatingToken();
-        JSONArray jsonArray = new RestTemplateBuilder()
-                .defaultHeader("Authorization", atomicToken.get().value())
+        return new RestTemplateBuilder()
+                .defaultHeader("Authorization", getToken().value())
                 .build()
                 .getForObject("https://www.strava.com/api/v3/activities",
                         JSONArray.class);
-        System.out.println(jsonArray);
-        return jsonArray;
     }
 
     public OAuthToken getToken() {

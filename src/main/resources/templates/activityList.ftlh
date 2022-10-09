@@ -14,6 +14,8 @@
             </ul>
         </#list>-->
         <br>
+        <br>
+        <br>
         <div>
             <form action="/main" method="get">
                 <button class="btn-primary" type="submit">Main page</button>
