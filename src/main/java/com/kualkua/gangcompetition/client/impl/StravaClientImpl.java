@@ -13,18 +13,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 
 @Component
+@Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class StravaClientImpl implements StravaClient {
 
     @Value("${clientId}")
@@ -39,7 +42,7 @@ public class StravaClientImpl implements StravaClient {
     @Value("${stravaBaseUrl}")
     String stravaBaseUrl;
 
-    private final AtomicReference<OAuthToken> atomicToken = new AtomicReference<>(OAuthToken.expiredToken());
+    private OAuthToken oAuthToken;
 
     public final ActivityRepository activityRepository;
 
@@ -53,13 +56,6 @@ public class StravaClientImpl implements StravaClient {
                             MemberRepository memberRepository) {
         this.activityRepository = activityRepository;
         this.memberRepository = memberRepository;
-    }
-
-    public void startInitiatingToken() {
-        if (atomicToken.get().getRefreshToken().equals("expired")) {
-            atomicToken.set(new AtomicReference<>(updateBearer(memberRepository
-                    .findByUsername(getUserName()).getRefreshToken())).get());
-        }
     }
 
     @SneakyThrows
@@ -83,9 +79,9 @@ public class StravaClientImpl implements StravaClient {
                 .postForObject(uri,
                         null,
                         StravaTokenResponseDto.class);
-        int stravaId = responseDto.getAthlete().getId();
+        int stravaId = Objects.requireNonNull(responseDto).getAthlete().getId();
         saveStravaId(stravaId);
-        atomicToken.set(initToken(responseDto));
+        oAuthToken = initToken(responseDto);
         return initToken(responseDto);
     }
 
@@ -109,7 +105,7 @@ public class StravaClientImpl implements StravaClient {
                 .postForObject(uri,
                         null,
                         StravaTokenResponseDto.class);
-        saveMemberRefresh(Objects.requireNonNull(responseDto.getRefreshToken()));
+        saveMemberRefresh(Objects.requireNonNull(responseDto).getRefreshToken());
         return initToken(responseDto);
     }
 
@@ -123,7 +119,7 @@ public class StravaClientImpl implements StravaClient {
     @Override
     public JSONObject getLastActivity() {
         JSONObject json = new RestTemplateBuilder()
-                .defaultHeader("Authorization", atomicToken.get().value())
+                .defaultHeader("Authorization", oAuthToken.value())
                 .build()
                 .getForObject("https://www.strava.com/api/v3/athletes/21288485/stats",
                         JSONObject.class);
@@ -146,19 +142,12 @@ public class StravaClientImpl implements StravaClient {
 
     @Override
     public JSONArray getActivities() {
-        startInitiatingToken();
+        oAuthToken = updateBearer(memberRepository.findByUsername(getUserName()).getRefreshToken());
         return new RestTemplateBuilder()
-                .defaultHeader("Authorization", getToken().value())
+                .defaultHeader("Authorization", oAuthToken.value())
                 .build()
                 .getForObject("https://www.strava.com/api/v3/activities",
                         JSONArray.class);
-    }
-
-    public OAuthToken getToken() {
-        if (atomicToken.get().isExpired()) {
-            atomicToken.set(this.fetchToken());
-        }
-        return atomicToken.get();
     }
 
     private OAuthToken fetchToken() {
@@ -175,7 +164,6 @@ public class StravaClientImpl implements StravaClient {
                 .queryParam("code", authValue)
                 .queryParam("client_id", clientId)
                 .queryParam("client_secret", clientSecret)
-                //.queryParam(REFRESH_TOKEN, "authorization_code")
                 .build()
                 .toUri();
     }
