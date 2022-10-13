@@ -43,6 +43,9 @@ public class StravaClientImpl implements StravaClient {
     @Value("${stravaBaseUrl}")
     String stravaBaseUrl;
 
+    @Value("${stravaRedirectUri}")
+    String stravaRedirectUri;
+
     private final AtomicReference<OAuthToken> atomicToken = new AtomicReference<>(OAuthToken.expiredToken());
 
     public final ActivityRepository activityRepository;
@@ -66,7 +69,7 @@ public class StravaClientImpl implements StravaClient {
                 .build()
                 .postForLocation("http://www.strava.com/oauth/authorize?client_id=" + clientId +
                                 "&response_type=code" +
-                                "&redirect_uri=http://localhost:8080/exchange_token&approval_prompt=force" +
+                                "&redirect_uri=" + stravaRedirectUri +
                                 "&scope=read,activity:read",
                         ResponseEntity.class)).toString());
     }

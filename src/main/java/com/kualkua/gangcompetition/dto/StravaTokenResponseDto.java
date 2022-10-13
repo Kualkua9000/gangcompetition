@@ -2,8 +2,10 @@ package com.kualkua.gangcompetition.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@NoArgsConstructor
 public class StravaTokenResponseDto {
 
     @JsonProperty("access_token")
