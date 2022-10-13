@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Arrays;
+
 @Controller
 @RequestMapping("/user")
 public class MemberController {
@@ -35,9 +37,9 @@ public class MemberController {
 
     @GetMapping("/activities")
     public String getActivities(Model model) {
-        //stravaClient.getActivities();
-        //LinkedHashMap<String, String> linkedHashMap = (LinkedHashMap) stravaClient.getActivities();
-        model.addAttribute("activityList", stravaClient.getActivities().toJSONString().substring(0, 300));
+        model.addAttribute(
+                "activityList",
+                Arrays.stream(stravaClient.getActivities()).toArray());
         return "activityList";
     }
 }

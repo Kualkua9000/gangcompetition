@@ -3,11 +3,11 @@ package com.kualkua.gangcompetition.client.impl;
 import com.kualkua.gangcompetition.client.OAuthToken;
 import com.kualkua.gangcompetition.client.StravaClient;
 import com.kualkua.gangcompetition.domain.Member;
+import com.kualkua.gangcompetition.domain.strava.ActivityStravaModel;
 import com.kualkua.gangcompetition.dto.StravaTokenResponseDto;
 import com.kualkua.gangcompetition.repository.ActivityRepository;
 import com.kualkua.gangcompetition.repository.MemberRepository;
 import lombok.SneakyThrows;
-import net.minidev.json.JSONArray;
 import net.minidev.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -142,13 +142,15 @@ public class StravaClientImpl implements StravaClient {
     }
 
     @Override
-    public JSONArray getActivities() {
+    public ActivityStravaModel[] getActivities() {
         getAtomicToken();
-        return new RestTemplateBuilder()
+
+        RestTemplateBuilder restTemplateBuilder = new RestTemplateBuilder();
+        return restTemplateBuilder
                 .defaultHeader("Authorization", atomicToken.get().value())
                 .build()
-                .getForObject("https://www.strava.com/api/v3/activities",
-                        JSONArray.class);
+                .getForObject("https://www.strava.com/api/v3/activities/",
+                        ActivityStravaModel[].class);
     }
 
     private OAuthToken fetchToken() {
