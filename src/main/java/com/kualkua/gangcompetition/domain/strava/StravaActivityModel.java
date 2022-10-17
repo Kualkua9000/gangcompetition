@@ -8,10 +8,10 @@ import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
-public class ActivityStravaModel {
+public class StravaActivityModel {
 
     @JsonProperty("athlete")
-    public AthleteStravaModel athlete;
+    public StravaAthleteModel athlete;
     @JsonProperty("name")
     public String name;
     @JsonProperty("distance")
@@ -35,9 +35,9 @@ public class ActivityStravaModel {
     @JsonProperty("utc_offset")
     public Double utcOffset;
     @JsonProperty("location_city")
-    public Object locationCity;
+    public String locationCity;
     @JsonProperty("location_state")
-    public Object locationState;
+    public String locationState;
     @JsonProperty("location_country")
     public String locationCountry;
     @JsonProperty("average_speed")

@@ -2,9 +2,9 @@ package com.kualkua.gangcompetition.domain;
 
 public enum ActivityType {
 
-    RUNNING("running"),
-    WALKING("walking"),
-    BICYCLE("bicycle");
+    RUNNING("Run"),
+    WALKING("Walk"),
+    RIDING("Ride");
 
     private final String name;
 

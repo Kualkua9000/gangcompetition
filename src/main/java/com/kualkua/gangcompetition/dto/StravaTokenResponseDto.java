@@ -14,7 +14,7 @@ public class StravaTokenResponseDto {
     @JsonProperty("refresh_token")
     private String refreshToken;
 
-    private StravaAthlete athlete;
+    private StravaAthleteDto athlete;
 
     @JsonProperty("expires_at")
     private int expiresAt;

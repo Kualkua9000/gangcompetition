@@ -1,5 +1,7 @@
 package com.kualkua.gangcompetition.domain;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -8,11 +10,13 @@ import java.util.Collection;
 import java.util.Set;
 
 @Entity
+@Data
+@NoArgsConstructor
 public class Member implements UserDetails {
 
-    private @Id
+    @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    Long id;
+    private Long id;
     private String username;
     private String password;
     private String email;
@@ -24,14 +28,6 @@ public class Member implements UserDetails {
     @CollectionTable(name = "member_role", joinColumns = @JoinColumn(name = "member_id"))
     @Enumerated(EnumType.STRING)
     private Set<Role> roles;
-
-    public Member() {
-    }
-
-    public Member(String username, String password) {
-        this.username = username;
-        this.password = password;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -70,57 +66,5 @@ public class Member implements UserDetails {
 
     public boolean isActive() {
         return active;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<Role> roles) {
-        this.roles = roles;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-
-    public Long getStravaId() {
-        return stravaId;
-    }
-
-    public void setStravaId(Long stravaId) {
-        this.stravaId = stravaId;
     }
 }

@@ -8,7 +8,7 @@ import java.time.LocalDate;
 
 @Data
 @NoArgsConstructor
-public class StravaAthlete {
+public class StravaAthleteDto {
     private int id;
     private String username;
     private String firstname;

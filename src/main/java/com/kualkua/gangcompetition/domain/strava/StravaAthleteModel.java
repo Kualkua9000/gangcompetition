@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class AthleteStravaModel {
+public class StravaAthleteModel {
 
     @JsonProperty("id")
     public Integer id;
