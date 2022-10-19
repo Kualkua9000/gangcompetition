@@ -1,20 +1,14 @@
 package com.kualkua.gangcompetition.mapper;
 
 import com.kualkua.gangcompetition.domain.Activity;
-import com.kualkua.gangcompetition.domain.ActivityType;
 import com.kualkua.gangcompetition.domain.strava.StravaActivityModel;
 
 import java.util.Arrays;
-import java.util.HashSet;
 
 public class StravaActivityMapper {
     public Activity convertModelToStravaActivity(StravaActivityModel model, long memberId) {
-        HashSet<ActivityType> set = new HashSet<>();
-        // TODO: 18.10.2022 to do correct ActivityType mapping
-        //set.add(ActivityType.valueOf(model.getType()));
         return new Activity(
                 memberId,
-                set,
                 model.getStravaActivityId(),
                 model.getName(),
                 model.getDistance(),

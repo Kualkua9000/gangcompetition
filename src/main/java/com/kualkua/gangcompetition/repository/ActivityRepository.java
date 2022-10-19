@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface ActivityRepository extends JpaRepository<Activity, Long> {
 
-    @Query("SELECT stravaActivityId FROM member_activity WHERE memberId = :memberId")
+    @Query("SELECT stravaActivityId FROM activity WHERE memberId = :memberId")
     List<Long> getAllStravaActivitiesId(@Param("memberId") Long memberId);
 }

@@ -9,14 +9,14 @@ import javax.persistence.*;
 import java.util.Collection;
 import java.util.Set;
 
-@Entity
+@Entity(name = "member")
 @Data
 @NoArgsConstructor
 public class Member implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    private Long memberId;
     private String username;
     private String password;
     private String email;
@@ -25,9 +25,11 @@ public class Member implements UserDetails {
     private Long stravaId;
 
     @ElementCollection(targetClass = Role.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "member_role", joinColumns = @JoinColumn(name = "member_id"))
+    @CollectionTable(name = "role", joinColumns = @JoinColumn(name = "id"))
     @Enumerated(EnumType.STRING)
-    private Set<Role> roles;
+    Set<Role> roles;
+    @OneToMany(mappedBy = "member")
+    Set<MembersChallenge> membersChallenges;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

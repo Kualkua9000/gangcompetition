@@ -5,22 +5,17 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Set;
 
-@Entity(name = "member_activity")
+@Entity(name = "activity")
 @NoArgsConstructor
 @Data
 public class Activity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
-    @CollectionTable(name = "member", joinColumns = @JoinColumn(name = "id"))
+    private Long activityId;
+    @CollectionTable(name = "member", joinColumns = @JoinColumn(name = "member_id"))
     private Long memberId;
-    @ElementCollection(targetClass = ActivityType.class, fetch = FetchType.EAGER)
-    @CollectionTable(name = "member_activity_type", joinColumns = @JoinColumn(name = "activity_id"))
-    @Enumerated(EnumType.STRING)
-    private Set<ActivityType> activityType;
     private Long stravaActivityId;
     private String name;
     private Double distance;
@@ -41,7 +36,6 @@ public class Activity {
     private Double averageWatts;
 
     public Activity(Long memberId,
-                    Set<ActivityType> activityType,
                     Long stravaActivityId,
                     String name,
                     Double distance,
@@ -61,7 +55,6 @@ public class Activity {
                     Double averageCadence,
                     Double averageWatts) {
         this.memberId = memberId;
-        this.activityType = activityType;
         this.stravaActivityId = stravaActivityId;
         this.name = name;
         this.distance = distance;

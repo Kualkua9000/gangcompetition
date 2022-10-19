@@ -60,7 +60,7 @@ public class StravaService {
         String currentUserName = "";
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             currentUserName = authentication.getName();
-        } return memberRepository.findByUsername(currentUserName).getId();
+        } return memberRepository.findByUsername(currentUserName).getMemberId();
     }
 
     public Authentication getAuthentication() {
