@@ -151,7 +151,7 @@ public class StravaClientImpl implements StravaClient {
         return restTemplateBuilder
                 .defaultHeader("Authorization", atomicToken.get().value())
                 .build()
-                .getForObject("https://www.strava.com/api/v3/activities/",
+                .getForObject("https://www.strava.com/api/v3/activities/?per_page=100",
                         StravaActivityModel[].class);
     }
 

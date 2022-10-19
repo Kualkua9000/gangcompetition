@@ -15,7 +15,7 @@ public class StravaActivityMapper {
         return new Activity(
                 memberId,
                 set,
-                model.getId(),
+                model.getStravaActivityId(),
                 model.getName(),
                 model.getDistance(),
                 model.getMovingTime(),

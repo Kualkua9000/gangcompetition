@@ -25,7 +25,7 @@ public class StravaActivityModel {
     @JsonProperty("sport_type")
     public String sportType;
     @JsonProperty("id")
-    public Long id;
+    public Long stravaActivityId;
     @JsonProperty("start_date")
     public LocalDateTime startDate;
     @JsonProperty("start_date_local")

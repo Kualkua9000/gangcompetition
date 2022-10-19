@@ -21,7 +21,7 @@ public class Activity {
     @CollectionTable(name = "member_activity_type", joinColumns = @JoinColumn(name = "activity_id"))
     @Enumerated(EnumType.STRING)
     private Set<ActivityType> activityType;
-    private Long athleteId;
+    private Long stravaActivityId;
     private String name;
     private Double distance;
     private Integer movingTime;
@@ -42,7 +42,7 @@ public class Activity {
 
     public Activity(Long memberId,
                     Set<ActivityType> activityType,
-                    Long athleteId,
+                    Long stravaActivityId,
                     String name,
                     Double distance,
                     Integer movingTime,
@@ -62,7 +62,7 @@ public class Activity {
                     Double averageWatts) {
         this.memberId = memberId;
         this.activityType = activityType;
-        this.athleteId = athleteId;
+        this.stravaActivityId = stravaActivityId;
         this.name = name;
         this.distance = distance;
         this.movingTime = movingTime;
