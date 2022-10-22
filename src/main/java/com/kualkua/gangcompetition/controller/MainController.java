@@ -31,10 +31,6 @@ public class MainController {
 
     @GetMapping("/")
     public String hello(Map<String, Object> model) {
-
-        // TODO: 09.02.2022 to remove test data
-        //stravaService.getUserLastActivity();
-
         return "welcome";
     }
 
@@ -52,17 +48,6 @@ public class MainController {
             @RequestParam String activityTime,
             @RequestParam String activityPace,
             Map<String, Object> model) {
-        /*Activity activity = Activity
-                .builder()
-                .
-        );*/
-        /*Activity activity = new Activity(
-                activityDistance,
-                activityTime,
-                activityPace,
-                activityDate,
-                Collections.singleton(ActivityType.valueOf(activityType.toUpperCase())));*/
-        //repository.save(activity);
         List<Activity> activityList = new ArrayList<>(repository.findAll());
         model.put("members", activityList);
         return "main";
